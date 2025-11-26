@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Author, Book
 
-
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
     books = serializers.HyperlinkedRelatedField(
         many=True,
@@ -20,7 +19,6 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
             'death_year',
             'books'
         ]
-
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.HyperlinkedRelatedField(
