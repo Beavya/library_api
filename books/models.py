@@ -1,19 +1,15 @@
 from django.db import models
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Author(models.Model):
     name = models.CharField(
         max_length=150,
         unique=True,
-        verbose_name="Имя автора",
-        help_text="Полное имя автора (например: Лев Толстой)"
+        verbose_name="ФИО Автора",
     )
     biography = models.TextField(
         blank=True,
         verbose_name="Биография",
-        help_text="Краткая биография или описание автора"
     )
     birth_year = models.PositiveIntegerField(
         null=True,
@@ -47,7 +43,11 @@ class Book(models.Model):
         verbose_name="Автор"
     )
     year = models.PositiveIntegerField(
-        verbose_name="Год выпуска"
+        verbose_name="Год выпуска",
+        validators=[
+            MinValueValidator(1000, message="Год должен быть не меньше 1000"),
+            MaxValueValidator(9999, message="Год должен быть не больше 9999")
+        ]
     )
     genre = models.CharField(
         max_length=100,

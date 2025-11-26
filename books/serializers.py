@@ -2,12 +2,17 @@ from rest_framework import serializers
 from .models import Author, Book
 
 
-class AuthorSerializer(serializers.ModelSerializer):
-    books = serializers.StringRelatedField(many=True, read_only=True)
+class AuthorSerializer(serializers.HyperlinkedModelSerializer):
+    books = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='book-detail'
+    )
 
     class Meta:
         model = Author
         fields = [
+            'url',
             'id',
             'name',
             'biography',
@@ -16,17 +21,22 @@ class AuthorSerializer(serializers.ModelSerializer):
             'books'
         ]
 
-class BookSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField(read_only=True)
+
+class BookSerializer(serializers.HyperlinkedModelSerializer):
+    author = serializers.HyperlinkedRelatedField(
+        read_only=True,
+        view_name='author-detail'
+    )
     author_id = serializers.PrimaryKeyRelatedField(
         queryset=Author.objects.all(),
         write_only=True,
-        help_text="ID автора из списка существующих"
+        help_text="ID автора"
     )
 
     class Meta:
         model = Book
         fields = [
+            'url',
             'id',
             'title',
             'author',
@@ -41,5 +51,4 @@ class BookSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author = validated_data.pop('author_id')
-        book = Book.objects.create(author=author, **validated_data)
-        return book
+        return Book.objects.create(author=author, **validated_data)
